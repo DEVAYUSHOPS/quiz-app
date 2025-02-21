@@ -46,7 +46,12 @@ export default function Quiz({ params }: { params: Promise<{ quizId: string }> }
 
   const handleTimeout = () => {
     setFeedback("Time's up! ⏳");
-    saveQuizAttempt(0);
+  
+    // Save attempt with empty user answer
+    if (question) {
+      saveQuizAttempt(question.question, question.correctAnswer, "No Answer", 0);
+    }
+  
     setTimeout(() => router.push("/results"), 2000);
   };
 
@@ -55,8 +60,9 @@ export default function Quiz({ params }: { params: Promise<{ quizId: string }> }
     const isCorrect = option === question?.correctAnswer;
     setFeedback(isCorrect ? "Correct! 🎉" : "Wrong ❌");
   
-    // Save full quiz data
-    saveQuizAttempt(question?.question || "", question?.correctAnswer || "", option, isCorrect ? 1 : 0);
+    if (question) {
+      saveQuizAttempt(question.question, question.correctAnswer, option, isCorrect ? 1 : 0);
+    }
   
     setTimeout(() => router.push("/results"), 2000);
   };
